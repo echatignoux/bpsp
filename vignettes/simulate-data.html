@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Code to simulate incidence-proxy data</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Code to simulate incidence-proxy data</h1>
+
+
+
+<p>To simulate data, we use a subset of 704 contigous french postal
+codes, among which 183 were supposedly covered by a cancer registry. The
+shape file is available in the <code>shap_geo</code> file. Population
+data by age for these postal codes as well as incidence rate, se and ppv
+values by age estimated for Corpus Uteri cancer in women (CU) with the
+hospitalisation proxy are given in dataset <code>dt_cu</code>.</p>
+<p>The parameters used for the simulation were the same as those used in
+the simulation section of the manuscript for the <span class="math inline">\(\rho=0.7\)</span> and <span class="math inline">\(N=20\)</span> scenario. They are given in the
+following table:</p>
+<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+param
+</th>
+<th style="text-align:right;">
+value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(N\)</span>
+</td>
+<td style="text-align:right;">
+20.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\overline{Se}\)</span>
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\overline{PPV}\)</span>
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\sigma_c\)</span>
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\phi_c\)</span>
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\delta_1\)</span>
+</td>
+<td style="text-align:right;">
+0.57
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\phi_1\)</span>
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\delta_2\)</span>
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\phi_2\)</span>
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span class="math inline">\(\rho\)</span>
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+</tr>
+</tbody>
+</table>
+<p>We first load required R packages, some utility fonctions needed for
+simulations and these datasets.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(RSpectra) </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;./R/format_data.R&quot;</span>) <span class="do">## R utilities to simulate data</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="do">## Shapefile</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">&quot;./data/shap_geo.rda&quot;</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="do">## Data with pop, muI rate and se and ppv estimated </span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">&quot;./data/dt_cu.rda&quot;</span>)</span></code></pre></div>
+<p>To generate <code>ICAR</code> random effects, we use the relation
+found for example in <span class="citation">Riebler et al.
+(2016)</span>:</p>
+<p><span class="math display">\[\boldsymbol{u} \sim
+N(0,\boldsymbol{Q^{-}}))\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{Q^{-}}\)</span> is a
+generalized inverse of the neighbouring matrix <span class="math inline">\(\boldsymbol{Q}\)</span>, defined as:</p>
+<p><span class="math display">\[Q_{ij} =
+\begin{cases}
+   \text{Number of neigbours for $i$ if } i=j\\
+   -1 \text{ if $i$ and $j$ share a common border}\\
+   0 \text{ otherwise}
+\end{cases}.
+\]</span>.</p>
+<p>Using a SVD decomposition, <span class="math inline">\(\boldsymbol{Q^{-}}\)</span> is decomposed as:</p>
+<p><span class="math display">\[\boldsymbol{Q^{-}}=\boldsymbol{Q_g}\boldsymbol{Q_g^\top}\]</span></p>
+<p>with <span class="math inline">\(\boldsymbol{Q_g}\)</span> of
+dimension <span class="math inline">\((J,J-1)\)</span>, where <span class="math inline">\(J\)</span> is the total number of geographical
+areas.</p>
+<p><span class="math inline">\(\boldsymbol{u}\)</span> is then generated
+as:</p>
+<p><span class="math display">\[\boldsymbol{u} = \boldsymbol{Q_g}
+\boldsymbol{b}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{b}\)</span> is as
+standardized gaussian random variable of size <span class="math inline">\(J-1\)</span>.</p>
+<p>The <span class="math inline">\(\boldsymbol{Q_g}\)</span> matrix is
+made available trough the function <code>scale_shap</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>cp <span class="ot">&lt;-</span> <span class="fu">scale_shap</span>(shap_geo)</span></code></pre></div>
+<p>The simulation then consists in:</p>
+<ol style="list-style-type: decimal">
+<li>Scale the <span class="math inline">\(\mu^I_{ij}\)</span>, <span class="math inline">\(Se_{ij}\)</span> and <span class="math inline">\(PPV_{ij}\)</span> levels in <code>dt_cu</code> to
+match the values for our simulation scenario (i.e., <span class="math inline">\(N\)</span> mean number of total cases in
+geographical areas, <span class="math inline">\(\overline{Se}\)</span>
+and <span class="math inline">\(\overline{PPV}\)</span>);</li>
+<li>Simulate BYM2 distributed random effects <span class="math inline">\(c_j\)</span>, <span class="math inline">\(u_{1j}\)</span> and <span class="math inline">\(u_{2j}\)</span> and update <span class="math inline">\(\mu^I_{ij}\)</span>, <span class="math inline">\(Se_{ij}\)</span> and <span class="math inline">\(PPV_{ij}\)</span> accordingly;</li>
+<li>Calculate <span class="math inline">\(\lambda_{ij}^{FN}\)</span>,
+<span class="math inline">\(\lambda_{ij}^{FP}\)</span> and <span class="math inline">\(\lambda_{ij}^{TP}\)</span> from <span class="math inline">\(\mu^I_{ij}\)</span>, <span class="math inline">\(Se_{ij}\)</span> and <span class="math inline">\(PPV_{ij}\)</span>;</li>
+<li>Generate <span class="math inline">\(FN_{ij}\)</span>, <span class="math inline">\(FP_{ij}\)</span> and <span class="math inline">\(TP_{ij}\)</span> from Poisson distribution with
+mean <span class="math inline">\(\lambda_{ij}^{FN}\)</span>, <span class="math inline">\(\lambda_{ij}^{FP}\)</span> and <span class="math inline">\(\lambda_{ij}^{TP}\)</span>;</li>
+<li>Calculate <span class="math inline">\(I_{ij}=FN_{ij}+TP_{ij}\)</span> and <span class="math inline">\(P_{ij}=FP_{ij}+TP_{ij}\)</span>.</li>
+</ol>
+<p>Details of the code is given bellow:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="do">###&#39; params ===============</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="do">## Simulation parameters</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>N<span class="ot">&lt;-</span><span class="dv">20</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>se<span class="ot">=</span>.<span class="dv">8</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>ppv<span class="ot">=</span>.<span class="dv">7</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>s_c <span class="ot">=</span>.<span class="dv">2</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="do">##&#39; Set s_u1 and s_u2 so that overall error in proxy s_e</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="do">##&#39; is .1</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>r_u <span class="ot">=</span> <span class="fl">0.7</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>s_u1 <span class="ot">=</span> .<span class="dv">57</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>s_u2 <span class="ot">=</span> .<span class="dv">41</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="do">## Check : 1st order dl of s_e</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="fu">sqrt</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u1<span class="sc">^</span><span class="dv">2</span><span class="sc">+</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u2<span class="sc">^</span><span class="dv">2-2</span><span class="sc">*</span>r_u<span class="sc">*</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">*</span>s_u1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">*</span>s_u2))</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; [1] 0.09216398</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="do">## Prop of spatial variance</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>phi_c<span class="ot">=</span>phi_1<span class="ot">=</span>phi_2<span class="ot">&lt;-</span>.<span class="dv">7</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(shap_geo)</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>n_b <span class="ot">&lt;-</span> n<span class="dv">-1</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="fu">RNGkind</span>(<span class="st">&quot;Wich&quot;</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="do">## Generate icar components</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>c_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>u1_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>u2_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="do">## Generate iid components</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>c_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>u1_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>u2_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="do">## Add correlation between u_i&#39;s</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>u2_icar <span class="ot">&lt;-</span> r_u <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_icar</span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>u2_iid <span class="ot">=</span> r_u <span class="sc">*</span> u1_iid <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_iid</span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="do">## Store bym2 effects in a tibble</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>dt_re <span class="ot">&lt;-</span> shap_geo <span class="sc">%&gt;%</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>  <span class="fu">select</span>(geo) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">c =</span> <span class="fu">sqrt</span>(phi_c) <span class="sc">*</span> c_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_c) <span class="sc">*</span> c_iid,</span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>          <span class="at">u1 =</span> <span class="fu">sqrt</span>(phi_1) <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_1) <span class="sc">*</span> u1_iid,</span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>          <span class="at">u2 =</span> <span class="fu">sqrt</span>(phi_2) <span class="sc">*</span> u2_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_2) <span class="sc">*</span> u2_iid</span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>  )</span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>dt_sim <span class="ot">&lt;-</span> dt_cu <span class="sc">%&gt;%</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muP=</span>se<span class="sc">/</span>ppv<span class="sc">*</span>muI)</span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="do">## Scale muI to have a mean N cases per geo</span></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>N<span class="sc">/</span><span class="fu">mean</span>(w)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muI=</span>muI<span class="sc">*</span>w) <span class="sc">%&gt;%</span></span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w)</span>
+<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
+<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%$%</span><span class="fu">mean</span>(w)</span>
+<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a><span class="co">#&gt; [1] 20</span></span>
+<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a><span class="do">## Scale Se to have mean Se per geo</span></span>
+<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
+<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se0=</span><span class="fu">sum</span>(se<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se=</span>se<span class="sc">/</span>se0<span class="sc">*!!</span>se) <span class="sc">%&gt;%</span></span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>se0)</span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a><span class="do">## Same for ppv</span></span>
+<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
+<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv0=</span><span class="fu">sum</span>(ppv<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv=</span>ppv<span class="sc">/</span>ppv0<span class="sc">*!!</span>ppv) <span class="sc">%&gt;%</span></span>
+<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>ppv0)</span>
+<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a></span>
+<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a><span class="do">## i, se, vpp, lbd_fn, lbd_fp and lbd_tp </span></span>
+<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a>  <span class="fu">left_join</span>(dt_re, <span class="at">by =</span> <span class="st">&quot;geo&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>  <span class="fu">group_by</span>(RA) <span class="sc">%&gt;%</span></span>
+<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(u1,u2),<span class="sc">~</span>.x<span class="sc">-</span><span class="fu">mean</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a>    <span class="at">muI =</span> muI<span class="sc">*</span><span class="fu">exp</span>(s_c<span class="sc">*</span>c),</span>
+<span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(se) <span class="sc">+</span> s_u1<span class="sc">*</span>u1),</span>
+<span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a>    <span class="at">ppv =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(ppv) <span class="sc">+</span> s_u2<span class="sc">*</span>u2),</span>
+<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>    <span class="at">lbd_fn =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>se),</span>
+<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>    <span class="at">lbd_fp =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>ppv) <span class="sc">*</span> se<span class="sc">/</span>ppv,</span>
+<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>    <span class="at">lbd_tp =</span> muI <span class="sc">*</span> se,</span>
+<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>    <span class="at">muP=</span>lbd_fp<span class="sc">+</span>lbd_tp</span>
+<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>  )</span>
+<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a></span>
+<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
+<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp),<span class="sc">~</span><span class="fu">sum</span>(.x<span class="sc">*</span>py)),</span>
+<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>         <span class="at">se =</span> lbd_tp<span class="sc">/</span>muI,<span class="at">ppv=</span>lbd_tp<span class="sc">/</span>muP) <span class="sc">%&gt;%</span></span>
+<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp,se,ppv),mean))</span>
+<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
+<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a><span class="co">#&gt;     muI   muP lbd_fn lbd_fp lbd_tp    se   ppv</span></span>
+<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a><span class="co">#&gt; 1  20.4  23.3   4.33   7.21   16.1 0.789 0.695</span></span>
+<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a><span class="co"># Counts TP, FN, FP and I and P</span></span>
+<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>    <span class="at">fn=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fn),</span>
+<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>    <span class="at">fp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fp),</span>
+<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>    <span class="at">tp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_tp),</span>
+<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>    <span class="at">I=</span>fn<span class="sc">+</span>tp,</span>
+<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>    <span class="at">P=</span>fp<span class="sc">+</span>tp</span>
+<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a></span>
+<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a><span class="co"># Set I to NA outside registry area</span></span>
+<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">I=</span><span class="fu">ifelse</span>(RA,I,<span class="cn">NA</span>))</span></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Riebler2016" class="csl-entry">
+Riebler, Andrea, Sigrunn H. Sørbye, Daniel Simpson, and Håvard Rue.
+2016. <span>“<span class="nocase">An intuitive Bayesian spatial model
+for disease mapping that accounts for scaling</span>.”</span>
+<em>Statistical Methods in Medical Research</em> 25 (2): 1–24. <a href="https://doi.org/10.1177/0962280216660421">https://doi.org/10.1177/0962280216660421</a>.
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

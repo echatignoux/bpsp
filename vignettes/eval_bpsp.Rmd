@@ -1,0 +1,395 @@
+---
+title: "Evaluate BP-SP model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This document illustrates how to estimate BP-SP models on a restricted
+simulated dataset using `R` and `stan`.
+
+## Dataset Overview
+
+The analysis is based on a simulated dataset `dt_sim`, which consists
+of gold-standard incidence $I$ observed in 183 postal codes
+supposedly covered by cancer registries, and proxy counts $P$
+observed in all of the 704 postal codes in the territory. The shape of
+the analysed region is contained in the dataset `shap_geo`.  
+
+The shape of the incidence rate, and the $se$ and $ppv$ values by age,
+are taken from the estimates for Corpus Uteri cancer in women (CU)
+with the hospitalisation proxy. The parameters used for the simulation
+are the same as those used in the simulation section of the manuscript
+for the $\rho=0.7$ and $N=20$ scenario. They are given in the
+following table: 
+
+```{r, include = TRUE, echo=F}
+library(kableExtra)
+library(tidyverse)
+dt_par=tribble(~param,~value,
+               "$N$",20,
+               "$\\overline{Se}$",0.8,
+               "$\\overline{PPV}$",0.7,
+               "$\\sigma_c$",0.2,
+               "$\\phi_c$",0.7,
+               "$\\delta_1$",0.57,
+               "$\\phi_1$",0.7,
+               "$\\delta_2$",0.41,
+               "$\\phi_2$",0.7,
+               "$\\rho$",0.7
+               )
+
+dt_par %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+## Setup
+The code used for the simulations is detailed in the file [simulate-data.html](simulate-data.html).
+
+We first load the packages required for data manipulation, the
+dataset, and some utility functions needed to format the datasets for
+`stan` use: 
+
+```{r setup}
+library(tidyverse)
+theme_set(theme_bw())
+library(magrittr)
+library(Matrix)
+library(mgcv)
+library(sf)
+library(spdep)
+library(RSpectra)
+
+load(file="./data/shap_geo.rda") ## Shapefile
+load(file="./data/dt_sim.rda") ## Simulated data
+
+source("./R/format_data.R") ## R utilities to format data
+
+```
+
+
+Estimation of the model may be done with `stan` or `cmdstan`. We use
+the latter in this vignette (see https://mc-stan.org/cmdstanr/ for
+installation instructions), and we will use the `tidybayes` package
+to format posterior estimates. 
+
+```{r cmd}
+library(cmdstanr)
+library(tidybayes)
+```
+
+The first step is to compile the `stan` program implementing the BP-SP
+model. This is done as follows: 
+
+```{r}
+bpsp <- cmdstan_model("./inst/stan/bp_sp.stan")
+
+``` 
+
+Next, the data must be processed to comply with the `stan` program
+requirements. We built a dedicated function `prep_data` which
+facilitates the data processing. 
+
+The function has two data requirements:
+
+1. `dt`: This must contain a `geo` column that identifies the
+   geographical area, as well as the incidence and proxy counts, and
+   any other covariate to be passed to the model. 
+2. `geo`: This informs the geographical structure of the
+   territory. The easiest format to use is an `sf` data.frame. 
+
+And two formulas:
+
+1. `form_id`: This specifies the within-area model. 
+2. `form_geo`: This specifies the model for the spatial latent
+   variables for incidence, $Se$, and $PPV$. Different specifications
+   may be set for random effects (RE). For example, for an ICAR RE for
+   $Se$, an IID for $PPV$, and BYM2 for incidence, the formula would
+   be set as: 
+
+   ```r
+   form_geo = ~ i(bym(geo)) + se(icar(geo)) + ppv(iid(geo))
+   ```
+
+
+Here, we specify BYM2 prior for incidence, Se and PPV, and model age
+via a cubic regression spline whith 5 knots, and put the log of
+person-years as an offset for the component $\mu^I_{ij}$.
+
+```{r}
+stan_dt <- prep_data(dt = dt_sim,
+                     form_id = c(I,P) ~ offset(log(py)) + s(age,bs="cr",k=5,fx=TRUE),
+                     form_geo= ~ bym(geo),
+                     geo=shap_geo)
+
+``` 
+
+The `stan_dt`object is a tibble with four components:
+
+1. `stan_dt$dt_fit`: a list of data for the stan fit;
+3. `stan_dt$dt_post`: a tibble used in post-processing stan fit;
+4. `stan_dt$form_id`: recall of `form_id`
+5. `stan_dt$form_geo`: recall of `form_geo`
+
+## Stan fit
+
+Now that the material is set, we can sample the HMC:
+
+```{r,eval=F}
+chains=4
+iter=1000
+warmup=1000
+thin=1
+
+fit <- bpsp$sample(stan_dt$dt_fit[[1]],
+                   chains = chains, parallel_chains = chains,
+                   iter_sampling = iter,iter_warmup = warmup,thin = thin,
+                   seed = 1,
+                   adapt_delta = 0.95,
+                   show_exceptions = TRUE,
+                   refresh = round(iter/10),
+                   save_warmup =F)
+
+``` 
+
+The model took 10 minutes to run on a CentOS 7 Linux server with an
+Intel(R) Xeon(R) Gold 2.90 GHz processor. The fit is made available in the
+file [`fit.rda`](https://drive.google.com/file/d/1BQ39CyDaCrRTwoK_pDNTBecakQTvlsaf/view?usp=sharing).
+
+
+```{r,eval=T}
+library(googledrive)
+drive_download(
+  file="https://drive.google.com/file/d/1BQ39CyDaCrRTwoK_pDNTBecakQTvlsaf/view?usp=sharing", path = "./data/fit.rda", overwrite = TRUE)
+load(file="./data/fit.rda")
+```
+
+## Posterior processing
+
+The correspondence between the age and geo indexes in the Stan fit and
+the original values is stored in the `stan_dt$dt_post` data.  
+In the following, we build functions to establish this correspondence. 
+```{r,eval=T}
+  # Functions for posterior summary
+  decod_age <- . %>%
+    left_join(
+      stan_dt$dt_post[[1]]$decod[[1]]$age,
+      by=c("id_age")) %>%
+    select(-id_age)
+  
+  decod_geo <- . %>%
+    left_join(
+      stan_dt$dt_post[[1]]$decod[[1]]$geo_ra %>%
+        mutate(n_geo=n()) %>%
+        bind_rows(
+          stan_dt$dt_post[[1]]$decod[[1]]$geo %>%
+            mutate(n_geo=n())),
+      by=c("id_geo","n_geo")) %>%
+    select(-id_geo)
+  
+```
+  
+
+### Parameters
+The correspondence between the model parameters and their `stan` names
+is given in the table below: 
+
+```{r, include = TRUE, echo=F}
+library(kableExtra)
+dt_par=tribble(~param,~stan,
+               "$\\overline{Se}$","b_sp[1]",
+               "$\\overline{PPV}$","b_sp[2]",
+               "$\\sigma_c$","s_c",
+               "$\\phi_c$","phi_c",
+               "$\\delta_1$","s_u[1]",
+               "$\\phi_1$","phi_u[1]",
+               "$\\delta_2$","s_u[2]",
+               "$\\phi_2$","phi_u[1]",
+               "$\\rho$","r_u[1]",
+               "$\\sigma_{\\nu_1}$","s_nu[1]",
+               "$\\sigma_{\\nu_2}$","s_nu[2]",
+               "$\\kappa$","kappa",
+               "$\\psi$","psi",
+               "$\\sigma_e$","s_e",
+               "$\\sigma_{d^\\star}$","s_ds"               
+               )
+
+dt_par %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+Their posterior summaries are recovered using:
+
+```{r,eval=T}
+  # Parameters
+  par_sum <- fit %>% 
+    gather_draws(s_c,s_u[comp],s_d,s_ds,s_e,kappa,psi,b_sp[comp],phi_c,phi_u[comp],r_u[comp],s_nu[comp]) %>% 
+    tidybayes::summarise_draws("mean", "median","sd", "rhat","ess_bulk","ess_tail",
+                               ~quantile(.x, probs = c(0.025, 0.975)))%>%
+    rename(pm=mean,par=.variable,low=`2.5%`,up=`97.5%`) %>%
+    ungroup() %>%
+    select(-variable) %>%
+    mutate(par=ifelse(is.na(comp),par,paste0(par,comp))) %>%
+    select(-comp)
+  
+  par_sum
+  
+```
+
+The convergence criteria `rhat` and `ess` are generally good for the
+relatively small number of iterations used. The key parameters
+$\overline{Se}$, $\overline{PPV}$, $\sigma_c$, $\delta_1$, $\delta_2$,
+and $\rho$ are in line with the values used for the simulations.   
+
+### Age rates
+The median age rates ($r^I_i$, $r^P_i$, $Se_i$, and $PPV_i$) are
+stored in the `rho` parameters, which are summarized as follows: 
+```{r,eval=T}
+  ## Age rates------
+  ar_sum <- fit %>% gather_draws(rho[id_age,comp]) %>%
+    group_by(id_age,comp) %>%
+    select(-.variable) %>%
+    tidybayes::summarise_draws("mean", "median","sd", "rhat","ess_bulk","ess_tail",
+                               ~quantile(.x, probs = c(0.025, 0.975)))%>%
+    rename(pm=mean,low=`2.5%`,up=`97.5%`) %>%
+    ungroup() %>%
+    mutate(comp=factor(comp,labels=c("r_i","r_p","se","ppv"))) %>%
+    select(-contains("variable")) %>%
+    decod_age() 
+```
+
+We can compare them with the true values used for the simulations,
+showing the good agreement between the estimated rates and the true
+rates used for the simulations:  
+
+```{r,eval=T, fig.width=7, fig.height=7}
+  ar_sum %<>%
+    left_join(
+      dt_sim %>%
+        ungroup() %>%
+        select(age,r_i=muI,r_p=muP,se,ppv) %>%
+        pivot_longer(-age, names_to = "comp",values_to = "tm") %>%
+        group_by(age,comp) %>%
+        summarise(tm=median(tm))
+    )
+  
+  ar_sum %>%
+    qplot( data=., age, tm)+
+    geom_line(aes(age,pm))+
+    geom_ribbon(aes(ymin=low,ymax=up),alpha=.2)+
+    facet_wrap(~comp, scales="free")+
+    xlab("Age")+ylab("Rate")
+  
+  
+```
+  
+### Spatial risks
+The spatial risks $\theta_j^I$ and $\theta_j^P$ are stored in the
+`theta` parameters, whereas the risks $\nu_1$ and $\nu_2$ for $Se$ and
+$PPV$ are given in the `nu` parameters. 
+
+```{r,eval=T}
+  # ## spatial risks------
+  spr_sum <- fit %>%
+    gather_draws(nu[id_geo,comp],theta[id_geo,comp]) %>%
+    tidybayes::summarise_draws("mean", "median","sd", "rhat","ess_bulk","ess_tail",
+                               ~quantile(.x, probs = c(0.025, 0.975)))%>%
+    rename(pm=mean,low=`2.5%`,up=`97.5%`) %>%
+    ungroup() %>%
+    mutate(comp=ifelse(is.na(comp),.variable,paste0(.variable,"_",comp))) %>%
+    select(-contains("variable"))
+  
+  spr_sum %<>%
+    group_by(comp) %>%
+    mutate(n_geo=length(unique(id_geo))) %>%
+    decod_geo()
+
+```
+
+Again, in our simulation context, we can compare the estimates with
+the true values:
+
+```{r,eval=T}
+  tm_spr<-
+    dt_sim %>%
+    select(age,geo,RA,py,theta_1=muI,theta_2=muP,nu_1=se,nu_2=ppv,u1,u2) %>%
+    group_by(age) %>%
+    mutate(across(c(theta_1,theta_2),median,.names = "E_{.col}"),
+           across(c(nu_1,nu_2),median,.names = "E_{.col}"),
+           w=sum(py)) %>%
+    group_by(geo,RA) %>%
+    summarise( 
+      se_b=sum(w*E_theta_1*E_nu_1)/sum(w*E_theta_1),
+      ppv_b=sum(w*E_theta_2*E_nu_2)/sum(w*E_theta_2),
+      nu_1 = sum(w*E_theta_1*nu_1)/sum(w*E_theta_1)/se_b,
+      nu_2 = sum(w*E_theta_2*nu_2)/sum(w*E_theta_2)/ppv_b,
+      theta_1 = sum(py*theta_1)/sum(py*E_theta_1),
+      theta_2 = sum(py*theta_2)/sum(py*E_theta_2)
+    ) %>%
+    ungroup() %>%
+    pivot_longer(-c(geo,RA), names_to = "comp",values_to = "tm") 
+  
+  spr_sum %<>%
+    left_join(  tm_spr,
+                by=c("geo","comp","RA"))
+  
+  spr_sum %>%
+    group_by(comp,RA)%>%
+    summarise(., r = sqrt(mean((pm - tm)^2)), sp = sd(pm), st = sd(tm),     
+              sm = mean(sd), c = cor(pm, tm), p = 100 * (1 - r^2/st^2),     
+              IP = 100 * mean((tm > low) * (tm < up)), 
+              across(c(pm, tm), mean))
+
+```
+
+The alignment between the posterior means and the true values is
+consistent with the simulations results presented in the manuscript; notably, the
+95% credible intervals show satisfactory coverage. 
+
+Finally, we can map the estimated risks; for instance, the spatial
+distribution of incidence (areas covered by a registry are highlighted
+in blue):
+
+```{r,eval=T,fig.width=7, fig.height=4}
+shap_ra <- shap_geo %>%
+  filter(geo %in% (dt_sim %>% filter(RA)%$%geo %>% unique()))
+
+theme_map <-
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        panel.spacing = unit(0,'lines'))
+
+spr_sum %>%
+  filter(comp=="theta_1") %>%
+  select(geo,pm,tm) %>%
+  pivot_longer(c(pm,tm),names_to = "typ") %>%
+  left_join(shap_geo) %>%
+  st_as_sf() %>%
+  ggplot( data = ., aes(fill=value)) +
+  geom_sf( colour = NA) +
+    scale_fill_gradientn(colours=rev(RColorBrewer::brewer.pal( n = 9, name = "RdYlGn")),
+                         na.value = "transparent",
+                         limits=c(0.7,1.3),
+                         oob = scales::squish)+
+  facet_grid(~typ)+
+  labs(fill=expression(theta))+
+  geom_sf( data = shap_ra, colour = "blue",fill=NA) +
+  theme_map+
+  theme(legend.position="bottom")
+
+
+```
