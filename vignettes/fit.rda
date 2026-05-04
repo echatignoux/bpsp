@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="en-us">
+
+<head>
+    <title>OSF | Sign in</title>
+    <meta charset="UTF-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><link rel="stylesheet" type="text/css" href="/webjars/normalize.css/8.0.1/normalize.css" /><link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.5.0/css/bootstrap-grid.min.css" /><link rel="stylesheet" type="text/css" href="/webjars/material-components-web/4.0.0/dist/material-components-web.css" /><link rel="stylesheet" type="text/css" href="/webjars/mdi__font/5.0.45/css/materialdesignicons.css" /><link rel="stylesheet" type="text/css" href="/css/cas-redesigned.css"/><link rel="icon" href="/favicon.ico" type="image/x-icon"/><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /></head>
+
+<body class="login mdc-typography">
+    <script type="text/javascript" src="/webjars/es5-shim/4.5.9/es5-shim.js"></script>
+<script type="text/javascript" src="/webjars/css-vars-ponyfill/2.3.1/dist/css-vars-ponyfill.min.js"></script>
+<script type="text/javascript" src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/material-components-web/4.0.0/dist/material-components-web.js"></script>
+
+<script type="text/javascript" src="/js/cas.js"></script>
+
+<script>
+    resourceLoadedSuccessfully();
+    cssVars({});
+</script>
+
+<script>
+    /*<![CDATA[*/
+
+    var trackGeoLocation = false;
+
+    var googleAnalyticsTrackingId = null;
+
+    if (googleAnalyticsTrackingId != null && googleAnalyticsTrackingId != '') {
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', googleAnalyticsTrackingId, 'auto');
+        ga('send', 'pageview');
+    }
+
+    /*]]>*/
+</script>
+<div class="small-screen-only">
+
+        <!-- Header --><header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4">
+            <nav class="mdc-top-app-bar__row">
+
+                <!-- OSF Logo --><section class="mdc-top-app-bar__section">
+                    <span class="cas-brand mx-auto" >
+                        <img class="cas-logo" src="/images/osf-logo-white.svg" alt="OSF logo"></span>
+                </section>
+
+                <!-- Sign-up botton for Mobile (narrow screen) view --><section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-center">
+                    <div class="form-button">
+                        <a id="osfSignUpButtonAlt" class="mdc-button mdc-button--raised button-osf-green" href="https://osf.io/register/">
+                            <span class="mdc-button__label">Sign up</span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Menu button for toggle navigation links on/off --><input type="checkbox" id="toggle-leftnav" class="toggle-nav-input" aria-controls='slideout-nav' hidden/><label for="toggle-leftnav" class="toggle-nav-label" aria-label="Toggle navigation menu">
+                    <img src="/images/menu.svg" alt="Toggle navigation menu"></label>
+
+                <!-- OSF Navigation Links --><aside id="slideout-nav" class="left-pane slideout cas-brand-text">
+                    <nav class="left-pane-nav">
+                        <!-- Home, Search, and Support Links --><ul class="left-pane-nav-list">
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/">
+                                    <img src="/images/home.svg" alt="Home">
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/search/">
+                                    <img src="/images/search.svg" alt="Search">
+                                    Search
+                                </a>
+                            </li>
+                            <li>
+                                <a class="navbar-link" href="https://help.osf.io">
+                                    <img src="/images/support.svg" alt="Support">
+                                    Support
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Registries, Preprints, Institutions and Meetings --><ul class="left-pane-nav-list">
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/registries/discover/">
+                                    <img src="/images/registries.svg" alt="Registries">
+                                    Registries
+                                    <img class="arrow-icon" src="/images/arrow.svg" alt="Arrow"></a>
+                            </li>
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/preprints/discover/">
+                                    <img src="/images/preprints.svg" alt="Preprints">
+                                    Preprints
+                                    <img class="arrow-icon" src="/images/arrow.svg" alt="Arrow"></a>
+                            </li>
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/institutions/">
+                                    <img src="/images/institutions.svg" alt="Institutions">
+                                    Institutions
+                                </a>
+                            </li>
+                            <li>
+                                <a class="navbar-link" href="https://osf.io/meetings/">
+                                    <img src="/images/meetings.svg" alt="Meetings">
+                                    Meetings
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Donate --><ul class="left-pane-nav-list">
+                            <li>
+                                <a class="navbar-link" href="https://www.cos.io/support-cos">
+                                    <img src="/images/donate.svg" alt="Donate">
+                                    Donate
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </aside>
+
+            </nav>
+        </header>
+
+        <script type="text/javascript">
+            function _disableButton(button){
+                if (button != null) {
+                    button.removeAttribute("href");
+                    button.style.cursor = "not-allowed";
+                    button.style.visibility = "hidden";
+                }
+            }
+            function disableSignUpButton() {
+                _disableButton(document.getElementById("osfSignUpButton"));
+                _disableButton(document.getElementById("osfSignUpButtonAlt"));
+            }
+        </script>
+
+        <script type="text/javascript">
+            (function (material) {
+                var header = {
+                    init: function () {
+                        material.autoInit();
+                    },
+                    checkCaps: function (ev) {
+                        var s = String.fromCharCode(ev.which);
+                        if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                            ev.target.parentElement.classList.add('caps-on');
+                        } else {
+                            ev.target.parentElement.classList.remove('caps-on');
+                        }
+                    },
+                }
+                document.addEventListener('DOMContentLoaded', function () {
+                    header.init();
+                });
+            })(mdc);
+        </script>
+    </div>
+
+    <div class="desktop-only">
+        <aside class="left-pane cas-brand-text">
+
+            <!-- OSF Logo --><div class="left-pane-logo-wrapper">
+                <img class="cas-logo" src="/images/osf-logo-white.svg" alt="OSF logo"></div>
+
+            <!-- OSF Navigation Links --><nav class="left-pane-nav">
+                <!-- Home, Search, and Support Links --><ul class="left-pane-nav-list">
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/">
+                            <img src="/images/home.svg" alt="Home">
+                            Home
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/search/">
+                            <img src="/images/search.svg" alt="Search">
+                            Search
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-link" href="https://help.osf.io">
+                            <img src="/images/support.svg" alt="Support">
+                            Support
+                        </a>
+                    </li>
+                </ul>
+                <!-- Registries, Preprints, Institutions and Meetings --><ul class="left-pane-nav-list">
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/registries/discover/">
+                            <img src="/images/registries.svg" alt="Registries">
+                            Registries
+                            <img class="arrow-icon" src="/images/arrow.svg" alt="Arrow"></a>
+                    </li>
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/preprints/discover/">
+                            <img src="/images/preprints.svg" alt="Preprints">
+                            Preprints
+                            <img class="arrow-icon" src="/images/arrow.svg" alt="Arrow"></a>
+                    </li>
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/institutions/">
+                            <img src="/images/institutions.svg" alt="Institutions">
+                            Institutions
+                        </a>
+                    </li>
+                    <li>
+                        <a class="navbar-link" href="https://osf.io/meetings/">
+                            <img src="/images/meetings.svg" alt="Meetings">
+                            Meetings
+                        </a>
+                    </li>
+                </ul>
+                <!-- Donate --><ul class="left-pane-nav-list">
+                    <li>
+                        <a class="navbar-link" href="https://www.cos.io/support-cos">
+                            <img src="/images/donate.svg" alt="Donate">
+                            Donate
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+        </aside>
+    </div>
+
+    <div class="flex-column mdc-top-app-bar--fixed-adjust d-flex justify-content-center main-background-gradient flex-grow-1">
+
+        <!-- Sign-up botton for Desktop (wide screen) view --><div class="form-button desktop-only">
+            <a id="osfSignUpButton" class="mdc-button mdc-button--raised button-osf-green sign-up-button" href="https://osf.io/register/">
+                <span class="mdc-button__label">Sign up</span>
+            </a>
+        </div>
+
+        <main id="main-content" class="container-lg py-4 flex-grow-1">
+            <div id="content" class="d-flex justify-content-center">
+
+        <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-30">
+            <section id="loginForm" class="login-section login-form">
+                <div class="d-flex flex-column justify-content-between m-auto">
+
+            <section class="text-without-mdi text-center text-bold text-large margin-large-vertical">
+                <span>Sign in with your OSF account to continue</span>
+            </section>
+
+            <section class="form-button">
+                <a class="mdc-button mdc-button--raised button-osf-grey" id="orcidlogin" href="clientredirect?client_name=orcid&amp;service=https%3A%2F%2Fosf.io%2Fdownload%2F9u4qy%2F&amp;locale=en">
+                    <img class="delegation-button-logo" src="/images/orcid-logo.png" alt="ORCiD logo"><span class="delegation-button-label">Sign in with ORCiD</span>
+                </a>
+                <a class="mdc-button mdc-button--raised button-osf-grey margin-large-vertical" id="instnLogin" href="/login?campaign=institution&amp;institutionId=&amp;service=https://osf.io/download/9u4qy/">
+                    <img class="delegation-button-logo" src="/images/institution-logo.png" alt="Institution logo"><span class="delegation-button-label">Sign in via institution</span>
+                </a>
+            </section>
+
+            <section>
+                <hr class="hr-text" data-content="OR" /></section>
+
+            <div class="form-wrapper">
+
+                <form method="post" id="fm1" action="login">
+
+                    <section class="cas-field my-2=3">
+                        </section>
+
+                    <section class="cas-field cas-field-primary my-3">
+                        <div class="mdc-text-field  d-flex">
+                            <input class="mdc-text-field__input"
+                                id="username"
+                                size="25"
+                                type="text"
+                                accesskey="e"
+                                value=""
+                                autocomplete="off"
+                                autofocus name="username" /><label for="username" class="mdc-floating-label"><span class="accesskey">E</span>mail</label>
+                        </div>
+                    </section>
+
+                    <section class="cas-field cas-field-primary my-3 mdc-input-group">
+                        <div class="mdc-input-group-field mdc-input-group-field-append">
+                            <div class="mdc-text-field  mdc-text-field--with-trailing-icon d-flex caps-check">
+                                <input class="mdc-text-field__input pwd"
+                                    type="password"
+                                    id="password"
+                                    size="25"
+                                    accesskey="p"
+                                    autocomplete="current-password" name="password" value="" /><label for="password" class="mdc-floating-label"><span class="accesskey">P</span>assword</label>
+                                <button class="reveal-password mdc-button mdc-input-group-append" type="button">
+                                    <i class="mdi mdi-eye reveal-password-icon"></i>
+                                    <span class="sr-only">Toggle Password</span>
+                                </button>
+                            </div>
+                            <div class="mdc-text-field-helper-line caps-warn">
+                                <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                    <span >CAPSLOCK key is turned on!</span>
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="cas-field cas-field-primary cas-field-col-2 my-3">
+                        <span class="cas-field-float-right text-bold">
+                            <a href="https://osf.io/forgotpassword/">Reset password</a>
+                        </span>
+                    </section>
+
+                    <section class="cas-field">
+
+                        <input type="hidden" name="execution" value="832a4a6b-5eea-48a8-9ae3-fb690d46dd5d_ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5Li1Ic0ZHWVgwQ0poLVJtWW1Dbm1iX0xDMkdheldyZXBfXzlDTmd2TGo4ZG9HSFhKdzg0SlRDWFZ3em5sbDlfOGJ0anpxd1V3YWpIOEZEZnRpUXJoZm0xMTlwRnRNN0V1ZDdDNkVWWjNsZGdfRzloUmhySXI0S2lmZmdhR1gyWWtfTmJ1bjJuaEZQV0dDZXpmUDZHV2FMZlZOQVZnbURGdjJJSzd6TTlUYW9vNEVFOGZ4NnJRdGNoMTVyQ283VEtlVnpfUDY5bkluVDM2Ul9HQTR2ZEg1bzl4WHNTRndrVEFkeUFzQmIzYV9GazkwRGl6V1NnTERpVU92eE9iYW55bFdfYjFPOUJtT1V3MDV5a2VUa2VfMjc0RUpraUJacEZGdjFwcXZmWGpIcktxTWhvWDBGQi0xWFhpT1Z3eFE5ZE52bTJzQ2xuVXFySldpbjlrZGtLb0xJRXBoaXV6bTE1RjVjaEJKOXM2SHZkdkxNTTZvRW9jOTAxQ0dzN0oxRHQ4dHh2WkhiNzAzUDdwQ0pLNDNCeEtXa1NqOEI5VkNIaGc2eTBZVlo4TU15aG9VQ3N2c1JLSlBBNXhaTkx1RUtGM3AydDdJSGVJRTVsR0Ficnp2bkZmMlU2UDhiLURiVlVIWUdpOGZaNDJRdjNNTmVhOFQtQ05ib0tNTnVpRl9sZUlWOWFrclRtQnFTVlRtMkxzdmw1X2JDdHhnUC1fQ045cjRhTW9xTWZtM1dDM1FlNlRDZzcyODZwaHFyM3lSV1BOSFZCT09kbDE5TkxaanhhdUFYbl92U2RtbGRrM2VXcVVpcW9QMlZZZk9GdEh1WTJjeWN1Y0dqZXFGNkFNTHhCRjI5QXZhVFl5TXZNdmdKSHVFS05SaGM0RGZHOUlnSWhiemY4b0p5NmRIWmc4dDduVnR5d25CZ0ZSa3NKUDFZVTlEM29ydVdZeUlkOVhVQ09NWGxUc1NjSVQ4ejh4YmpBeWRUVGNsR1hoYm95RExHakJTcE03MkdVMDgzZmdtNGg0d2lxYmhoSWVVTVFrbU00d2xsSndidDBlOFVQOHV0aFo3TEJzNFdiRHBFc1ZMX2VUdFZpMEZLdnRSNjhoLThqSF9JMHhRMm5MMFZlZFJkcXA1NHZDZVNVajlQVlVxdG1jc2M1YXdieDB5QzNSUHlIZjdfSkZiS1ppR0VLeWVtejJVTV80dGZuT283UVotYkZIcVhsb3FuWGdXOVhqNFV2TzhqYTBBU2tFd0RCUjFXQVd4Q3NXaWxNbEt3RW54b0luV2VfNEJsV3BtbGdydFN2aHJWRndEWUl1dTlZQm5leTRmXzhYa2FEU1huQndmTVA2Tnhla2pSVzdPRmtaV0JrekZvcGpvdDhpMWFxZ0Q1T2VfZFhJZU1vX25WcXR6aTBQLWdMSjlvcE9FQm1OWHNlVHBNWDNFeHV6bERfM0xNWGZodk55STh5THZRckNabHBjbmN2aldYUDlOSENudXhadnN5VVVOU2dYSjQ3UkhYcS1JR0RnT2FPcUZQVTdsQlNXQnprVU9jNDRVQXBvcXBmblRfS1N2amlKajN6VUU4WFRRS0M5MVNxclQ1OUNNQ3MzLVdGckJrRlpLRzlJYTNxM2hyQ19DdHJrUXNvLWU3d0R1RUU5M2ZqcnJkMnViM2Q3QkVDRGI1TndSell4Y1NuU3lGRDJadDJiem1jNTlvaUZNZU9xX3F2QmlkOFg3UUpVMFVOQm5pWmNzU21yZkIwZ0o4eTlxa1FnV0UyTHIyQ2hia0JCVm9lY2wwME05cHk4M3JpTUJZcU4tcHJySEQ1dTRkYlc5RVJHS0ZIVWJOZFd6ZVZ1STNIWnFmX09MTTNyVzVsN0JSa19IYUFHU3RETTNTMVc3UjF3VGFmdDVnNm5XdFRNQ2pZLXE3V3NGV2xSYW10T01yVlRDQWVJNGROX2VadWV2OER3X2I4cmhXVFY4SU5KWXA5Rk9iTXdEb08yV3lKRnVyVE1OZGxLeEpiOEZod0xyaVZndTV4TG9nVGFQX2ZHQXhTWFFMckNVQ0tpc3NFMUlPcmpDaU1sS0RoYXloYmdndXBjd1dCa21KQl9VV0ZaellaMG13ZmtJWmUyLTQyT2swcFhNY0JKQnc1QWJaWUVEY0dkM21manJoY09LbE0xMjNQVl9SVzdnRlcwa05yNFZpS2dvQ2g0VlE0SjRCV1c2NzA5Tm9vMUlDNmhQMWMxUHNxZWZUSUZSNHpXYlRVRmZKNV9ucEdwUHBxeTVvT1gwYmtIdHVBT2VKeU1PdWxtTmltVnZpMmg0b3BrZGhNcEtrdnpsY3RMNUUycjZOTHQ0ZWhFY2k2d2R4NzlYZjBKRWk3dUd6MEhRNVphRnl4em9uaDJ1RUtxdG9FRThhMjFUWGJvLXZITk5waDgyb28wbVFUYlctS2otNEVfVEhCM2JnYThGbGlFTmczZC00ei1LQ0lvbFNKOUEwejFVbWhEM3puRGM3SmZxZ1gySWdyZGFsajAzWDJKc25MeVNMZkxPSEE1NFczbkdERml0eXBwalU5ZlpGNUFlQllzcGRULUFGNFI5bk5TNThfc082STl4Wl8tbzNGZjdKUFU3UU5FYVBBMWJKVk5ja3RLY2NBTkNSWDh4d2lhQ3FCYVdxZXJZakRCZGZxNVhnVW5QV08zc21mRXNRTmlpSVN3dF84T0RGZW5QOGVXRzlscC1NNnItVVpIdG9Hc1otOExzWFp3SThIeF9GV09vRXlEblRWcjJCZFFXdWhIZFdFdDN3Y0hSVFI4TzFreVQ2a3VaV1ZuTHZoMU5jdV9mYXdmTUlwMnpfRUZ4SFBPX1AxWGxGR0ZiRDlJY0xhN3ZyMmR5eEFyYnlxU3VySXl6N01tcXA4Z0J6aTF2N29jVWJ1Smx5cHdpb090UTcxNkxGVXRPUmVxclNWN1JYVjFfOTRfX3pkUFVFem1Bdzg0THE1ckgyVXZpMlpOUXZNTGpOUmFleF9IYzV2dEI1UUQ0ZHhKUUUtUGFZdjJNUnRRdzBpamo2amZVQmFPbUc0dGJNQ0tEQlgtLUhudUtDYmxRZWFmX2c3OGMtT0RGRHgzNFpUWG5wUENzYXp6aHJlck85bEdwQkVVMWNXaHk0RnNWTjZyUXBQNEoxaTA1OEc1UF93V2xCeW81dWptMkcyNnlKU3NMbVhuMk5QanM5VHhlM1VqWkZCWkNWNjZ3OUpsbWg1TEVfSm5OMHRLU25aaHplakZhM09ja25HeGowZmk4SEJMMldfS1FHX003WWF3emF3N2p5UUtMX0UwNEtfUVE1b3lpXzNSdUsyLXhUbU5LTHBsLWJIUUh3TDdqbEtTazkyWkgwVlRTOVYxazhkM0FLeVdvQjB5eldvV1lpT29YUF9DdEtoWjA4QjhWc1pVcDU2ckNEaGpNcGdmRk1DM3BnMzk0Rnc4ZUc5bnd5bjFPcDcxTWVkQm5yZW1pXzMzZE5SR25yNl9TZTdwX3BOT0pfSVVRWDhUV1pGMy14THczWW43WFZDT3ltSWhUY2hpa0V0empldkRlQjF2Y2hZYzlJNGZOSXpRcWVDWkNDdHBIeVVSZjE4dGZyNlo2Zm85d05LNjVPLVRTV0N1cnFmMlJPNDhjR1Z2LTNIQkpNY3RZZ2V2M3NHTFZmSFh5cWxJQkUxN3ozX3M4a0J4MjVYMU1MSEloTmczNkIzaFU1U1pqdVJnM084a2gwcXg4X19aNzhhTC1NampmUEI0a1c4c3RTQlF5UHlSU3JDTnBLZjBGNUJ5UlhrbFVIMTdjVmxhQ3lvUEgyU2VRekRyR2gzVFR4akRoYS1YYlJHT2M3b1N6S3lGZFZRczFxM19wVnJNMFBZQTdha05HeFAwR2lmdVA4TmZseWhlakd1OXFpbXc2RFFKb2ZZRzU1RjlfOENodmg3b0JUejdHRkRuOHZtblpNbFJGcVd1WGtRRTF1TWgxdERwelRlU1Z2UmlIUC1nYXM0TmQ0SVk0U3JHXzNVVFBicFllUEJJeGFsdXg1Q3dac2JLYUh0akxFZDBwczV2dmE0VjR2Sno3TkVHWE1VbzREZkI2WGxXblE4eGE2S1h0YUtTTm5aY2puWVVYZlpIbkpQWkE3cnRrYnVnalVfMW8wOV91SlVyRGJobVVwbFczT0xjeGhoRGdzMm9sNVpRZEd1aWszYlNxQTBUNHVBQmowOVJJTDBvOEFlX1ZuQUVMY3hydlBoR0tGVk5IVmN4N2M2VTVPOGMzMGgwNmw3Uy1UdjEwNEF3Zk5hUkx5Z3ZoUjNNSTBHVl9LRnJHYVJ2STFxRG5xbHhZc3NzNkk3RkdjX3lTeUkwTmdEejRESmhfX29mNVd5OWg1Q09JV3IyT1RGY1NwSjM4aTV1TDlMcThvVjM5MmhHcE5rV3Vib19jMWl5NFY5UXBwaXk2SFlxMUNfZmloSGJ4dVROenV0Wm0ya3B4UVZzcGZRNVN3TjlnMGpUMkFfblVFc1NwUjdaR3ROczFDcWk3RnZvQzlYV3RCeVVEOHFFTlMtYmUwX01QNHNzVXFhYkJEdDBYNUtnYW83RFA0Zmx4YjNJV3JVX1Z1YU9xMGtjakdJREdGejd6NzZXUE9JdFZGaFhPUTdFZE9qRm05eW1ZU1hONXhMTEwwTmpqWWw0NWFQZ2g2WXRreTdjeDlsb3lEUWk4Snd6SkhCdzYtYTVCMHVwZFVSaDBHRXdxOVVleWZmSExRbGtIMFUyX0RmbV82anF6TUk4eTR3Qk8zZU5QQWJKNlE2NnhENmJiUHg5aDVIcXJ3TVgxQ3JwalM5YjhfRkRDOHJLbGxwN1ZCcnk0QVp5bzUtWUppYWtzV0J6ODJRTGhvdGdXa25GdHo4QjFyRmswdnNEUUhnd2d2aEQ4amw2RXlFUFhXM3Q2SWszWDJHeXNmT2dhOHJXZlptZEhJQ25FdE4yTzB1bE9XM0NiOGp3VDNLVnQ0UVVlV0luUzNPeEt5UTJSRlY2S0xMcGtvMHNOTWR3OS1yQm0zQkNlaUlKTzFhRkFPejZPWC1SYkg0VHpES2ZrX181a0NOLTFpUC1pUWE2cG92eDAtLVZ4RFR6a0p2TXRqMWxpbWhzUFRxdDNNTThKZlBFc2dCNXlDMnNfTEtnWFJwOTJJYTJmQTFiUnVENnhZM1ZUN3E4N3pQVmo3MEY5N3h3VURKeTUtU1NqYkpLTVhiX1FWQmNlMm9iNUZRejZZTzJYVzVtc1pkbzJ5aHpJeXVCQkNjWWNDR3JtSldCNUM3LU9EZHB2dWFUZVVBczdXTUNldXYyWmY2WEhPQXZQOFp3dVpQUXRtY01Vc2s3d3hjN0dhU0t6cHFsQmhqNElmU003UFRpc0RpQlVyUHVERGxtVlZUNmV3ZXhDZVdYQlJfbW5idHZiSUpiMHNuZjBQclA0ZkY5ZDBkOUZjZlFGOFJWUVJCUnEtaDZ0R3NHcTg0UjJxR1p6VFJrRVYzRkJyWi1ULXFUZlM4ZmtuS3ZpSmw2R0RGaXM0Qm1NdHVYUWQ4V3gxdllmUTljWmZ3VWdPbnVhelB2M1o3V3pKYlFzOUFfQmNxbWVXZFZmMWdka0R1VFhhRktMLXdLLXlzU3haeC12YnRFa01KRU5DQ2pQUU01YXpWTktkV1JqTy1meHJVQzZYWUdvd2ZHODFGMjZuQUZ3ekQ4OGtiQ2tTZVVQcEhSUXlfVGtaX0hlMnIxU0FFcmVYblNJTEZSd3V2bEx3Nlh1d0dISXdmaU5TcTZxSGJrZ1ZxOXA3NVlnanN2cnFDai1PVVpnZFZvYWQzb0tiVkZTYnU1SkFuUFZUbWFIblZuY3VIZE1EVTlKc3dJdnNyTmx5SlNBNkdHc3l5X3BxMmQwcFppVUh1SzlnU3Z6ZFJCcmdsVUptQ1NsU2hhdjRNckRBcHNHS2trODlxcHViTDlyUzJ3b05rQmt6TWpnVEhWOXVOUExLaG1HWU9FVVVGbVVoR09MSjJVbkE4aDA4bzBFZDY2UGlsUjRNQlp0bzNRTVJFOFNNVUxMZTh4RXZpWDVLOVcwZkNlQ3dGSW9leFA0OGYwNjZUT0hUT3AzWUdRZFBZM1p6aWJiY2lfbjRnWE40R3ByNWNUOFlXbGwuU05DSzhNdHhjWVJ3enZfak1LOFd4THBleHZ4NzVEd2Q4RzliekhhT2FEelJBM1BPNllEeDNiUkhVX3FWRlp0YUUxZWw2OEw0cDFvZUtCWGZMRmVvZVE="/><input type="hidden" name="_eventId" value="submit"/><input type="hidden" name="geolocation"/></section>
+                    <section>
+                        <span class="cas-field-float-left margin-large-vertical">
+                            <input type="checkbox" name="rememberMe" id="rememberMe" value="true"/>&nbsp;
+                            <label for="rememberMe">Stay signed in</label>
+                        </span>
+                    </section>
+
+                    <section>
+                        <div class="form-button">
+            <button
+                    class="mdc-button mdc-button--raised button-osf-blue"
+                    name="submit"
+                    accesskey="l"
+                    type="submit">
+                <span class="mdc-button__label">Sign in</span>
+            </button>
+            </div>
+                    </section>
+
+                    <section class="cas-field cas-field-primary cas-field-col-2">
+                        <span class="center-align-text full-width text-bold">
+                            <a href="https://help.osf.io/article/272-sign-in-to-osf">Need help signing in?</a>
+                        </span>
+                    </section>
+
+                </form>
+
+                <script type="text/javascript">
+                    /*<![CDATA[*/
+                        var i = "One moment please ...";
+                        var j = "Sign in";
+                    /*]]>*/
+                    $(window).on('pageshow', function () {
+                        $(':submit').prop('disabled', false);
+                        $(':submit').attr('value', j);
+                    });
+                    $(document).ready(function () {
+                        $("#fm1").submit(function () {
+                            $(":submit").attr("disabled", true);
+                            $(":submit").attr("value", i);
+                            return true;
+                        });
+                    });
+                </script>
+
+            </div>
+        </div>
+            </section>
+        </div>
+    </div>
+        </main>
+
+        <footer class="py-4 d-flex justify-content-center cas-footer cas-footer-osf">
+    <section>
+        <span id="footer-line-1"
+            class="footer-section"><span><a style="white-space: nowrap" href="https://cos.io">Center for Open Science</a></span><span><a style="white-space: nowrap" href="https://github.com/centerforopenscience" aria-label="GitHub"><img src="/images/github.svg" alt="GitHub"></a>&#160;<a style="white-space: nowrap" href="https://www.linkedin.com/company/center-for-open-science" aria-label="LinkedIn"><img src="/images/linkedin.svg" alt="LinkedIn"></a>&#160;<a style="white-space: nowrap" href="https://bsky.app/profile/cos.io" aria-label="Bluesky"><img src="/images/bluesky.svg" alt="Bluesky"></a>&#160;<a style="white-space: nowrap" href="https://fosstodon.org/@CenterforOpenScience" aria-label="Mastodon"><img src="/images/mastodon.svg" alt="Mastodon"></a>&#160;</span></span>
+    </section>
+
+    <section>
+        <span id="footer-line-2"
+            class="footer-section"><span style="white-space: nowrap"><a style="white-space: nowrap" href="https://github.com/CenterForOpenScience/centerforopenscience.org/blob/master/TERMS_OF_USE.md">Terms of Use</a>&#160;&#124;&#160;<a style="white-space: nowrap" href="https://github.com/CenterForOpenScience/centerforopenscience.org/blob/master/PRIVACY_POLICY.md">Privacy Policy</a>&#160;&#124;&#160;<a style="white-space: nowrap" href="https://status.cos.io/">Status</a>&#160;&#124;&#160;<a style="white-space: nowrap" href="https://developer.osf.io/">API</a>&#160;&#124;&#160;<a style="white-space: nowrap" href="https://www.cos.io/initiatives/top-guidelines">TOP Guidelines</a></span><span style="white-space: nowrap">Copyright &copy; 2011 &ndash; 2026</span></span>
+    </section>
+</footer>
+    </div>
+
+</body>
+
+</html>

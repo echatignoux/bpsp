@@ -272,6 +272,7 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -595,7 +596,24 @@ hospitalisation proxy are given in dataset <code>dt_cu</code>.</p>
 <p>The parameters used for the simulation were the same as those used in
 the simulation section of the manuscript for the <span class="math inline">\(\rho=0.7\)</span> and <span class="math inline">\(N=20\)</span> scenario. They are given in the
 following table:</p>
-<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<pre><code>#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#&gt; ✔ dplyr     1.2.1     ✔ readr     2.2.0
+#&gt; ✔ forcats   1.0.1     ✔ stringr   1.6.0
+#&gt; ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+#&gt; ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+#&gt; ✔ purrr     1.2.2     
+#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#&gt; ✖ dplyr::filter() masks stats::filter()
+#&gt; ✖ dplyr::lag()    masks stats::lag()
+#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+#&gt; 
+#&gt; Attaching package: &#39;kableExtra&#39;
+#&gt; 
+#&gt; 
+#&gt; The following object is masked from &#39;package:dplyr&#39;:
+#&gt; 
+#&gt;     group_rows</code></pre>
+<table class="table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -691,19 +709,39 @@ value
 </table>
 <p>We first load required R packages, some utility fonctions needed for
 simulations and these datasets.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="do">## </span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(RSpectra) </span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;./R/format_data.R&quot;</span>) <span class="do">## R utilities to simulate data</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="do">## Shapefile</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">&quot;./data/shap_geo.rda&quot;</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="do">## Data with pop, muI rate and se and ppv estimated </span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">&quot;./data/dt_cu.rda&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">## </span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; Loading required package: spData</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; To access larger datasets in this package, install the spDataLarge</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; package with: `install.packages(&#39;spDataLarge&#39;,</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; repos=&#39;https://nowosad.github.io/drat/&#39;, type=&#39;source&#39;)`</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="fu">library</span>(RSpectra) </span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;Matrix&#39;</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:tidyr&#39;:</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt;     expand, pack, unpack</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;magrittr&#39;</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:purrr&#39;:</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt;     set_names</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:tidyr&#39;:</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt;     extract</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; here() starts at /home/onyxia/work/bpsp</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="fu">source</span>(<span class="fu">here</span>(<span class="st">&quot;R/format_data.R&quot;</span>)) <span class="do">## R utilities to simulate data</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="do">## Shapefile</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="fu">here</span>(<span class="st">&quot;data/shap_geo.rda&quot;</span>))</span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="do">## Data with pop, muI rate and se and ppv estimated </span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="fu">here</span>(<span class="st">&quot;data/dt_cu.rda&quot;</span>))</span></code></pre></div>
 <p>To generate <code>ICAR</code> random effects, we use the relation
 found for example in <span class="citation">Riebler et al.
 (2016)</span>:</p>
@@ -731,8 +769,8 @@ as:</p>
 standardized gaussian random variable of size <span class="math inline">\(J-1\)</span>.</p>
 <p>The <span class="math inline">\(\boldsymbol{Q_g}\)</span> matrix is
 made available trough the function <code>scale_shap</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>cp <span class="ot">&lt;-</span> <span class="fu">scale_shap</span>(shap_geo)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>cp <span class="ot">&lt;-</span> <span class="fu">scale_shap</span>(shap_geo)</span></code></pre></div>
 <p>The simulation then consists in:</p>
 <ol style="list-style-type: decimal">
 <li>Scale the <span class="math inline">\(\mu^I_{ij}\)</span>, <span class="math inline">\(Se_{ij}\)</span> and <span class="math inline">\(PPV_{ij}\)</span> levels in <code>dt_cu</code> to
@@ -747,132 +785,132 @@ mean <span class="math inline">\(\lambda_{ij}^{FN}\)</span>, <span class="math i
 <li>Calculate <span class="math inline">\(I_{ij}=FN_{ij}+TP_{ij}\)</span> and <span class="math inline">\(P_{ij}=FP_{ij}+TP_{ij}\)</span>.</li>
 </ol>
 <p>Details of the code is given bellow:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="do">###&#39; params ===============</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="do">## Simulation parameters</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>N<span class="ot">&lt;-</span><span class="dv">20</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>se<span class="ot">=</span>.<span class="dv">8</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>ppv<span class="ot">=</span>.<span class="dv">7</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>s_c <span class="ot">=</span>.<span class="dv">2</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="do">##&#39; Set s_u1 and s_u2 so that overall error in proxy s_e</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="do">##&#39; is .1</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>r_u <span class="ot">=</span> <span class="fl">0.7</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>s_u1 <span class="ot">=</span> .<span class="dv">57</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>s_u2 <span class="ot">=</span> .<span class="dv">41</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="do">## Check : 1st order dl of s_e</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="fu">sqrt</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u1<span class="sc">^</span><span class="dv">2</span><span class="sc">+</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u2<span class="sc">^</span><span class="dv">2-2</span><span class="sc">*</span>r_u<span class="sc">*</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">*</span>s_u1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">*</span>s_u2))</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; [1] 0.09216398</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="do">## Prop of spatial variance</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>phi_c<span class="ot">=</span>phi_1<span class="ot">=</span>phi_2<span class="ot">&lt;-</span>.<span class="dv">7</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(shap_geo)</span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>n_b <span class="ot">&lt;-</span> n<span class="dv">-1</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="fu">RNGkind</span>(<span class="st">&quot;Wich&quot;</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="do">## Generate icar components</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>c_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>u1_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>u2_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="do">## Generate iid components</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>c_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>u1_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>u2_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="do">## Add correlation between u_i&#39;s</span></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>u2_icar <span class="ot">&lt;-</span> r_u <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_icar</span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>u2_iid <span class="ot">=</span> r_u <span class="sc">*</span> u1_iid <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_iid</span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="do">## Store bym2 effects in a tibble</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>dt_re <span class="ot">&lt;-</span> shap_geo <span class="sc">%&gt;%</span></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>  <span class="fu">select</span>(geo) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">c =</span> <span class="fu">sqrt</span>(phi_c) <span class="sc">*</span> c_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_c) <span class="sc">*</span> c_iid,</span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>          <span class="at">u1 =</span> <span class="fu">sqrt</span>(phi_1) <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_1) <span class="sc">*</span> u1_iid,</span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>          <span class="at">u2 =</span> <span class="fu">sqrt</span>(phi_2) <span class="sc">*</span> u2_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_2) <span class="sc">*</span> u2_iid</span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>  )</span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>dt_sim <span class="ot">&lt;-</span> dt_cu <span class="sc">%&gt;%</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muP=</span>se<span class="sc">/</span>ppv<span class="sc">*</span>muI)</span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="do">## Scale muI to have a mean N cases per geo</span></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>N<span class="sc">/</span><span class="fu">mean</span>(w)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muI=</span>muI<span class="sc">*</span>w) <span class="sc">%&gt;%</span></span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w)</span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a></span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%$%</span><span class="fu">mean</span>(w)</span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a><span class="co">#&gt; [1] 20</span></span>
-<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a><span class="do">## Scale Se to have mean Se per geo</span></span>
-<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
-<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se0=</span><span class="fu">sum</span>(se<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se=</span>se<span class="sc">/</span>se0<span class="sc">*!!</span>se) <span class="sc">%&gt;%</span></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>se0)</span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a><span class="do">## Same for ppv</span></span>
-<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
-<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
-<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv0=</span><span class="fu">sum</span>(ppv<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
-<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv=</span>ppv<span class="sc">/</span>ppv0<span class="sc">*!!</span>ppv) <span class="sc">%&gt;%</span></span>
-<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>ppv0)</span>
-<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a></span>
-<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a><span class="do">## i, se, vpp, lbd_fn, lbd_fp and lbd_tp </span></span>
-<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a>  <span class="fu">left_join</span>(dt_re, <span class="at">by =</span> <span class="st">&quot;geo&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>  <span class="fu">group_by</span>(RA) <span class="sc">%&gt;%</span></span>
-<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(u1,u2),<span class="sc">~</span>.x<span class="sc">-</span><span class="fu">mean</span>(.x))) <span class="sc">%&gt;%</span></span>
-<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a>    <span class="at">muI =</span> muI<span class="sc">*</span><span class="fu">exp</span>(s_c<span class="sc">*</span>c),</span>
-<span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(se) <span class="sc">+</span> s_u1<span class="sc">*</span>u1),</span>
-<span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a>    <span class="at">ppv =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(ppv) <span class="sc">+</span> s_u2<span class="sc">*</span>u2),</span>
-<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>    <span class="at">lbd_fn =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>se),</span>
-<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>    <span class="at">lbd_fp =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>ppv) <span class="sc">*</span> se<span class="sc">/</span>ppv,</span>
-<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>    <span class="at">lbd_tp =</span> muI <span class="sc">*</span> se,</span>
-<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>    <span class="at">muP=</span>lbd_fp<span class="sc">+</span>lbd_tp</span>
-<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>  )</span>
-<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a></span>
-<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
-<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
-<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp),<span class="sc">~</span><span class="fu">sum</span>(.x<span class="sc">*</span>py)),</span>
-<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>         <span class="at">se =</span> lbd_tp<span class="sc">/</span>muI,<span class="at">ppv=</span>lbd_tp<span class="sc">/</span>muP) <span class="sc">%&gt;%</span></span>
-<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp,se,ppv),mean))</span>
-<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
-<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a><span class="co">#&gt;     muI   muP lbd_fn lbd_fp lbd_tp    se   ppv</span></span>
-<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a><span class="co">#&gt; 1  20.4  23.3   4.33   7.21   16.1 0.789 0.695</span></span>
-<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a></span>
-<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a><span class="co"># Counts TP, FN, FP and I and P</span></span>
-<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>    <span class="at">fn=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fn),</span>
-<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>    <span class="at">fp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fp),</span>
-<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>    <span class="at">tp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_tp),</span>
-<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>    <span class="at">I=</span>fn<span class="sc">+</span>tp,</span>
-<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>    <span class="at">P=</span>fp<span class="sc">+</span>tp</span>
-<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a><span class="co"># Set I to NA outside registry area</span></span>
-<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
-<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">I=</span><span class="fu">ifelse</span>(RA,I,<span class="cn">NA</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="do">###&#39; params ===============</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="do">## Simulation parameters</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>N<span class="ot">&lt;-</span><span class="dv">20</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>se<span class="ot">=</span>.<span class="dv">8</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>ppv<span class="ot">=</span>.<span class="dv">7</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>s_c <span class="ot">=</span>.<span class="dv">2</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="do">##&#39; Set s_u1 and s_u2 so that overall error in proxy s_e</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="do">##&#39; is .1</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>r_u <span class="ot">=</span> <span class="fl">0.7</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>s_u1 <span class="ot">=</span> .<span class="dv">57</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>s_u2 <span class="ot">=</span> .<span class="dv">41</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="do">## Check : 1st order dl of s_e</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="fu">sqrt</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u1<span class="sc">^</span><span class="dv">2</span><span class="sc">+</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">^</span><span class="dv">2</span><span class="sc">*</span>s_u2<span class="sc">^</span><span class="dv">2-2</span><span class="sc">*</span>r_u<span class="sc">*</span>((<span class="dv">1</span><span class="sc">-</span>se)<span class="sc">*</span>s_u1<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>ppv)<span class="sc">*</span>s_u2))</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; [1] 0.09216398</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="do">## Prop of spatial variance</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>phi_c<span class="ot">=</span>phi_1<span class="ot">=</span>phi_2<span class="ot">&lt;-</span>.<span class="dv">7</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(shap_geo)</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>n_b <span class="ot">&lt;-</span> n<span class="dv">-1</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="fu">RNGkind</span>(<span class="st">&quot;Wich&quot;</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="do">## Generate icar components</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>c_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>u1_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>u2_icar <span class="ot">=</span> cp<span class="sc">$</span>Q_gen <span class="sc">%*%</span> <span class="fu">rnorm</span>(n_b) <span class="sc">%&gt;%</span> as.numeric</span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="do">## Generate iid components</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>c_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>u1_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>u2_iid <span class="ot">=</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="do">## Add correlation between u_i&#39;s</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>u2_icar <span class="ot">&lt;-</span> r_u <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_icar</span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>u2_iid <span class="ot">=</span> r_u <span class="sc">*</span> u1_iid <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>r_u<span class="sc">^</span><span class="dv">2</span>) <span class="sc">*</span> u2_iid</span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="do">## Store bym2 effects in a tibble</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>dt_re <span class="ot">&lt;-</span> shap_geo <span class="sc">%&gt;%</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>  <span class="fu">select</span>(geo) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="at">c =</span> <span class="fu">sqrt</span>(phi_c) <span class="sc">*</span> c_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_c) <span class="sc">*</span> c_iid,</span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>          <span class="at">u1 =</span> <span class="fu">sqrt</span>(phi_1) <span class="sc">*</span> u1_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_1) <span class="sc">*</span> u1_iid,</span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>          <span class="at">u2 =</span> <span class="fu">sqrt</span>(phi_2) <span class="sc">*</span> u2_icar <span class="sc">+</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">-</span>phi_2) <span class="sc">*</span> u2_iid</span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>  )</span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>dt_sim <span class="ot">&lt;-</span> dt_cu <span class="sc">%&gt;%</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muP=</span>se<span class="sc">/</span>ppv<span class="sc">*</span>muI)</span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="do">## Scale muI to have a mean N cases per geo</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>N<span class="sc">/</span><span class="fu">mean</span>(w)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">muI=</span>muI<span class="sc">*</span>w) <span class="sc">%&gt;%</span></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w)</span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%$%</span><span class="fu">mean</span>(w)</span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="co">#&gt; [1] 20</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="do">## Scale Se to have mean Se per geo</span></span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muI<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se0=</span><span class="fu">sum</span>(se<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">se=</span>se<span class="sc">/</span>se0<span class="sc">*!!</span>se) <span class="sc">%&gt;%</span></span>
+<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>se0)</span>
+<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a><span class="do">## Same for ppv</span></span>
+<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a>  <span class="fu">group_by</span>(age) <span class="sc">%&gt;%</span></span>
+<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-78"><a href="#cb4-78" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-79"><a href="#cb4-79" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">w=</span>w<span class="sc">/</span><span class="fu">sum</span>(muP<span class="sc">*</span>py)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-80"><a href="#cb4-80" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb4-81"><a href="#cb4-81" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv0=</span><span class="fu">sum</span>(ppv<span class="sc">*</span>w)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-82"><a href="#cb4-82" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv=</span>ppv<span class="sc">/</span>ppv0<span class="sc">*!!</span>ppv) <span class="sc">%&gt;%</span></span>
+<span id="cb4-83"><a href="#cb4-83" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>w,<span class="sc">-</span>ppv0)</span>
+<span id="cb4-84"><a href="#cb4-84" tabindex="-1"></a></span>
+<span id="cb4-85"><a href="#cb4-85" tabindex="-1"></a><span class="do">## i, se, vpp, lbd_fn, lbd_fp and lbd_tp </span></span>
+<span id="cb4-86"><a href="#cb4-86" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-87"><a href="#cb4-87" tabindex="-1"></a>  <span class="fu">left_join</span>(dt_re, <span class="at">by =</span> <span class="st">&quot;geo&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-88"><a href="#cb4-88" tabindex="-1"></a>  <span class="fu">group_by</span>(RA) <span class="sc">%&gt;%</span></span>
+<span id="cb4-89"><a href="#cb4-89" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(u1,u2),<span class="sc">~</span>.x<span class="sc">-</span><span class="fu">mean</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-90"><a href="#cb4-90" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-91"><a href="#cb4-91" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-92"><a href="#cb4-92" tabindex="-1"></a>    <span class="at">muI =</span> muI<span class="sc">*</span><span class="fu">exp</span>(s_c<span class="sc">*</span>c),</span>
+<span id="cb4-93"><a href="#cb4-93" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(se) <span class="sc">+</span> s_u1<span class="sc">*</span>u1),</span>
+<span id="cb4-94"><a href="#cb4-94" tabindex="-1"></a>    <span class="at">ppv =</span> <span class="fu">inv_logit</span>( <span class="fu">logit</span>(ppv) <span class="sc">+</span> s_u2<span class="sc">*</span>u2),</span>
+<span id="cb4-95"><a href="#cb4-95" tabindex="-1"></a>    <span class="at">lbd_fn =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>se),</span>
+<span id="cb4-96"><a href="#cb4-96" tabindex="-1"></a>    <span class="at">lbd_fp =</span> muI <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>ppv) <span class="sc">*</span> se<span class="sc">/</span>ppv,</span>
+<span id="cb4-97"><a href="#cb4-97" tabindex="-1"></a>    <span class="at">lbd_tp =</span> muI <span class="sc">*</span> se,</span>
+<span id="cb4-98"><a href="#cb4-98" tabindex="-1"></a>    <span class="at">muP=</span>lbd_fp<span class="sc">+</span>lbd_tp</span>
+<span id="cb4-99"><a href="#cb4-99" tabindex="-1"></a>  )</span>
+<span id="cb4-100"><a href="#cb4-100" tabindex="-1"></a></span>
+<span id="cb4-101"><a href="#cb4-101" tabindex="-1"></a>dt_sim <span class="sc">%&gt;%</span> </span>
+<span id="cb4-102"><a href="#cb4-102" tabindex="-1"></a>  <span class="fu">group_by</span>(geo) <span class="sc">%&gt;%</span></span>
+<span id="cb4-103"><a href="#cb4-103" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp),<span class="sc">~</span><span class="fu">sum</span>(.x<span class="sc">*</span>py)),</span>
+<span id="cb4-104"><a href="#cb4-104" tabindex="-1"></a>         <span class="at">se =</span> lbd_tp<span class="sc">/</span>muI,<span class="at">ppv=</span>lbd_tp<span class="sc">/</span>muP) <span class="sc">%&gt;%</span></span>
+<span id="cb4-105"><a href="#cb4-105" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-106"><a href="#cb4-106" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(muI,muP,lbd_fn,lbd_fp,lbd_tp,se,ppv),mean))</span>
+<span id="cb4-107"><a href="#cb4-107" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 × 7</span></span>
+<span id="cb4-108"><a href="#cb4-108" tabindex="-1"></a><span class="co">#&gt;     muI   muP lbd_fn lbd_fp lbd_tp    se   ppv</span></span>
+<span id="cb4-109"><a href="#cb4-109" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb4-110"><a href="#cb4-110" tabindex="-1"></a><span class="co">#&gt; 1  20.4  23.3   4.33   7.21   16.1 0.789 0.695</span></span>
+<span id="cb4-111"><a href="#cb4-111" tabindex="-1"></a></span>
+<span id="cb4-112"><a href="#cb4-112" tabindex="-1"></a><span class="co"># Counts TP, FN, FP and I and P</span></span>
+<span id="cb4-113"><a href="#cb4-113" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-114"><a href="#cb4-114" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-115"><a href="#cb4-115" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-116"><a href="#cb4-116" tabindex="-1"></a>    <span class="at">fn=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fn),</span>
+<span id="cb4-117"><a href="#cb4-117" tabindex="-1"></a>    <span class="at">fp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_fp),</span>
+<span id="cb4-118"><a href="#cb4-118" tabindex="-1"></a>    <span class="at">tp=</span><span class="fu">rpois</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> py<span class="sc">*</span>lbd_tp),</span>
+<span id="cb4-119"><a href="#cb4-119" tabindex="-1"></a>    <span class="at">I=</span>fn<span class="sc">+</span>tp,</span>
+<span id="cb4-120"><a href="#cb4-120" tabindex="-1"></a>    <span class="at">P=</span>fp<span class="sc">+</span>tp</span>
+<span id="cb4-121"><a href="#cb4-121" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-122"><a href="#cb4-122" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb4-123"><a href="#cb4-123" tabindex="-1"></a></span>
+<span id="cb4-124"><a href="#cb4-124" tabindex="-1"></a><span class="co"># Set I to NA outside registry area</span></span>
+<span id="cb4-125"><a href="#cb4-125" tabindex="-1"></a>dt_sim <span class="sc">%&lt;&gt;%</span></span>
+<span id="cb4-126"><a href="#cb4-126" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">I=</span><span class="fu">ifelse</span>(RA,I,<span class="cn">NA</span>))</span></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Riebler2016" class="csl-entry">
 Riebler, Andrea, Sigrunn H. Sørbye, Daniel Simpson, and Håvard Rue.

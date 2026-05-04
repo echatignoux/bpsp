@@ -1,6 +1,10 @@
 ---
 title: "Code to simulate incidence-proxy data"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    keep_md: true
+  rmarkdown::github_document:
+    toc: true
 bibliography: ref.bib
 vignette: >
   %\VignetteIndexEntry{simulate-data}
@@ -11,16 +15,6 @@ vignette: >
 
 
 
-``` r
-library(sf)
-library(tidyverse)
-library(magrittr)
-source("./R/format_data.R") ## R utilities to format data for BP-SP evaluation
-#> Warning in file(filename, "r", encoding = encoding): impossible d'ouvrir le fichier './R/format_data.R' : No
-#> such file or directory
-#> Error in file(filename, "r", encoding = encoding): impossible d'ouvrir la connexion
-```
-
 To simulate data, we use a subset of 704 contigous french postal
 codes, among which 183 were supposedly covered by a cancer
 registry. The shape file is available in the `shap_geo` file. 
@@ -28,20 +22,124 @@ Population data by age for these postal codes as well as incidence
 rate, se and ppv values by age estimated for Corpus Uteri cancer
 in women (CU) with the hospitalisation proxy are given in dataset `dt_cu`. 
 
-We first load these datasets.
+The parameters used for the simulation were the same as those used in
+the simulation section of the manuscript for the $\rho=0.7$ and $N=20$
+scenario. They are given in the following table:
+
+
+```
+#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#> ✔ dplyr     1.2.1     ✔ readr     2.2.0
+#> ✔ forcats   1.0.1     ✔ stringr   1.6.0
+#> ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+#> ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+#> ✔ purrr     1.2.2     
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::filter() masks stats::filter()
+#> ✖ dplyr::lag()    masks stats::lag()
+#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+#> 
+#> Attaching package: 'kableExtra'
+#> 
+#> 
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     group_rows
+```
+
+<table class="table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> param </th>
+   <th style="text-align:right;"> value </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> $N$ </td>
+   <td style="text-align:right;"> 20.00 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\overline{Se}$ </td>
+   <td style="text-align:right;"> 0.80 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\overline{PPV}$ </td>
+   <td style="text-align:right;"> 0.70 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\sigma_c$ </td>
+   <td style="text-align:right;"> 0.20 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\phi_c$ </td>
+   <td style="text-align:right;"> 0.70 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\delta_1$ </td>
+   <td style="text-align:right;"> 0.57 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\phi_1$ </td>
+   <td style="text-align:right;"> 0.70 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\delta_2$ </td>
+   <td style="text-align:right;"> 0.41 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\phi_2$ </td>
+   <td style="text-align:right;"> 0.70 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> $\rho$ </td>
+   <td style="text-align:right;"> 0.70 </td>
+  </tr>
+</tbody>
+</table>
+
+
+
+
+
+We first load required R packages, some utility fonctions needed for
+simulations and these datasets.
 
 
 ``` r
+## 
+library(sf)
+#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.4.0; sf_use_s2() is TRUE
+library(spdep)
+#> Loading required package: spData
+#> To access larger datasets in this package, install the spDataLarge
+#> package with: `install.packages('spDataLarge',
+#> repos='https://nowosad.github.io/drat/', type='source')`
+library(RSpectra) 
+library(Matrix)
+#> 
+#> Attaching package: 'Matrix'
+#> The following objects are masked from 'package:tidyr':
+#> 
+#>     expand, pack, unpack
+library(tidyverse)
+library(magrittr)
+#> 
+#> Attaching package: 'magrittr'
+#> The following object is masked from 'package:purrr':
+#> 
+#>     set_names
+#> The following object is masked from 'package:tidyr':
+#> 
+#>     extract
+library(here)
+#> here() starts at /home/onyxia/work/bpsp
+source(here("R/format_data.R")) ## R utilities to simulate data
+
 ## Shapefile
-load(file="./data/shap_geo.rda")
-#> Warning in readChar(con, 5L, useBytes = TRUE): impossible d'ouvrir le fichier compressé
-#> './data/shap_geo.rda', cause probable : 'No such file or directory'
-#> Error in readChar(con, 5L, useBytes = TRUE): impossible d'ouvrir la connexion
+load(file=here("data/shap_geo.rda"))
 ## Data with pop, muI rate and se and ppv estimated 
-load(file="./data/dt_cu.rda")
-#> Warning in readChar(con, 5L, useBytes = TRUE): impossible d'ouvrir le fichier compressé './data/dt_cu.rda',
-#> cause probable : 'No such file or directory'
-#> Error in readChar(con, 5L, useBytes = TRUE): impossible d'ouvrir la connexion
+load(file=here("data/dt_cu.rda"))
 ```
 
 To generate `ICAR` random effects, we use the relation found for example in @Riebler2016:
@@ -82,19 +180,19 @@ cp <- scale_shap(shap_geo)
 
 ```
 
-The rest of the simulation consists in:
+The simulation then consists in:
 
-1. Scaling the LM $\mu^I_{ij}$, $Se_{ij}$ and $PPV_{ij}$ levels to match the values
-for our simulation scenario (N=20 mean number of total cases in
-   geographical areas, $\overline{Se}=0.8$ and $\overline{PPV}=0.7$;
+1. Scale the $\mu^I_{ij}$, $Se_{ij}$ and $PPV_{ij}$ levels in `dt_cu` to match the values
+for our simulation scenario (i.e., $N$ mean number of total cases in
+   geographical areas, $\overline{Se}$ and $\overline{PPV}$);
 2. Simulate BYM2 distributed random effects $c_j$,  $u_{1j}$ and
-   $u_{2j}$ and integrate them to $mu^I_{ij}$, $Se_{ij}$ and
-   $PPV_{ij}$;
-3. Calculate $\lambda_{ij}^FN$, $\lambda_{ij}^FP$ and
-   $\lambda_{ij}^TP$ from $c_j$,  $u_{1j}$ and
-   $u_{2j}$ and integrate them to $mu^I_{ij}$, $Se_{ij}$;
+   $u_{2j}$ and update $\mu^I_{ij}$, $Se_{ij}$ and
+   $PPV_{ij}$ accordingly;
+3. Calculate $\lambda_{ij}^{FN}$, $\lambda_{ij}^{FP}$ and
+   $\lambda_{ij}^{TP}$ from $\mu^I_{ij}$, $Se_{ij}$ and $PPV_{ij}$;
 4. Generate $FN_{ij}$,  $FP_{ij}$ and $TP_{ij}$ from Poisson
-   distribution.
+   distribution with mean $\lambda_{ij}^{FN}$, $\lambda_{ij}^{FP}$ and
+   $\lambda_{ij}^{TP}$;
 5. Calculate $I_{ij}=FN_{ij}+TP_{ij}$ and $P_{ij}=FP_{ij}+TP_{ij}$.
 
 
@@ -125,7 +223,7 @@ n <- nrow(shap_geo)
 n_b <- n-1
 
 RNGkind("Wich")
-set.seed(2)
+set.seed(3)
 
 ## Generate icar components
 c_icar = cp$Q_gen %*% rnorm(n_b) %>% as.numeric
@@ -211,7 +309,7 @@ dt_sim %>%
 #> # A tibble: 1 × 7
 #>     muI   muP lbd_fn lbd_fp lbd_tp    se   ppv
 #>   <dbl> <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl>
-#> 1  20.8  23.9   4.21   7.31   16.6 0.782 0.695
+#> 1  20.4  23.3   4.33   7.21   16.1 0.789 0.695
 
 # Counts TP, FN, FP and I and P
 dt_sim %<>%
@@ -232,8 +330,3 @@ dt_sim %<>%
 ```
 
 
-```
-#> Warning in gzfile(file, "wb"): impossible d'ouvrir le fichier compressé './data/dt_sim.rda', cause probable
-#> : 'No such file or directory'
-#> Error in gzfile(file, "wb"): impossible d'ouvrir la connexion
-```

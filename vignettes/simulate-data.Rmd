@@ -1,6 +1,10 @@
 ---
 title: "Code to simulate incidence-proxy data"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    keep_md: true
+  rmarkdown::github_document:
+    toc: true
 bibliography: ref.bib
 vignette: >
   %\VignetteIndexEntry{simulate-data}
@@ -62,12 +66,13 @@ library(RSpectra)
 library(Matrix)
 library(tidyverse)
 library(magrittr)
-source("./R/format_data.R") ## R utilities to simulate data
+library(here)
+source(here("R/format_data.R")) ## R utilities to simulate data
 
 ## Shapefile
-load(file="./data/shap_geo.rda")
+load(file=here("data/shap_geo.rda"))
 ## Data with pop, muI rate and se and ppv estimated 
-load(file="./data/dt_cu.rda")
+load(file=here("data/dt_cu.rda"))
 ``` 
 
 To generate `ICAR` random effects, we use the relation found for example in @Riebler2016:
@@ -251,5 +256,5 @@ dt_sim %<>%
 ``` 
 
 ```{r,echo=F}
-save(dt_sim,file="./data/dt_sim.rda")
+save(dt_sim,file=here("data/dt_sim.rda"))
 ``` 
