@@ -97,7 +97,8 @@ parameters{
 
   /*Params splines*/
   array[(is_pen) ? 1 : 0] real<lower=0> s_f;
-  matrix[d_z,3] b_zf;  
+  matrix[d_z,3] 
+  b_zf;  
 
   /*Params cov*/
   array[n_pen_w] real<lower=0> s_w;
@@ -108,7 +109,7 @@ parameters{
 transformed parameters{
   vector[n_geo] c ;
   matrix[n_geo_ra,2] u ;
-  array[2] real<lower=0, upper=1> w_sp ;
+  array[2] real<lower=0, upper=1> b_sp ;
   array[(!ra_only) ? 1 : 0] real<lower=0> s_ora ;
   array[1] real<lower=0,upper=1> r_u;
   matrix[d_x[1],3] b_f;
@@ -141,8 +142,8 @@ transformed parameters{
     
 
   // mean se and vpp
-  w_sp[1] = sum( w_pop .* exp(r_a[,1] ) .* inv_logit(r_a[,2]) ) / sum( w_pop .* exp(r_a[,1]) ) ; // Mean se
-  w_sp[2] = sum( w_pop .* exp(r_a[,1] ) .* inv_logit(r_a[,2]) ) / sum( w_pop .* exp(r_a[,1]) .* inv_logit(r_a[,2]) ./ inv_logit(r_a[,3] ) ) ; // Mean vpp
+  b_sp[1] = sum( w_pop .* exp(r_a[,1] ) .* inv_logit(r_a[,2]) ) / sum( w_pop .* exp(r_a[,1]) ) ; // Mean se
+  b_sp[2] = sum( w_pop .* exp(r_a[,1] ) .* inv_logit(r_a[,2]) ) / sum( w_pop .* exp(r_a[,1]) .* inv_logit(r_a[,2]) ./ inv_logit(r_a[,3] ) ) ; // Mean vpp
 
   if (!ra_only){
     s_ora[1] = ga_ora[1] ;
@@ -253,9 +254,9 @@ generated quantities{
   // Variance of nuj (order 3 DL)
   for (i in 1:2){
     s_nu[i] = sqrt(
-		   (1-w_sp[i])^2*s_u[i]^2 + 
-		   ((1-w_sp[i])^2*w_sp[i]*(2*w_sp[i]-1) + (w_sp[i]*(1-w_sp[i]))^2/2)*s_u[i]^4+
-		   15*((1-w_sp[i])*w_sp[i]*(2*w_sp[i]-1)/6)^2*s_u[i]^6
+		   (1-b_sp[i])^2*s_u[i]^2 + 
+		   ((1-b_sp[i])^2*b_sp[i]*(2*b_sp[i]-1) + (b_sp[i]*(1-b_sp[i]))^2/2)*s_u[i]^4+
+		   15*((1-b_sp[i])*b_sp[i]*(2*b_sp[i]-1)/6)^2*s_u[i]^6
 		   );
   }
  
@@ -279,7 +280,7 @@ generated quantities{
 
   // spatial se and vpp
   for (j in 1:2) {
-    nu[,j] = nuj(w_sp[j],s_u[j]*u[,j]+r_w[geo_ra,j+1]);
+    nu[,j] = nuj(b_sp[j],s_u[j]*u[,j]+r_w[geo_ra,j+1]);
   }
 
   // spatial risks for I and P
@@ -288,13 +289,13 @@ generated quantities{
   if (!ra_only){
     theta[geo_ora,1]  =  exp( kappa * s_ds * c[geo_ora] + sqrt(kappa * (1-kappa) ) * s_ds * d_star[geo_ora] + r_w[geo_ora,1] ) ;
     theta[geo_ora,2]  =  exp( s_ds * c[geo_ora] + r_w[geo_ora,1] + 
-                              log(nuj(w_sp[1],r_w[geo_ora,2])) - 
-                              log(nuj(w_sp[2],r_w[geo_ora,3])) ) ;
+                              log(nuj(b_sp[1],r_w[geo_ora,2])) - 
+                              log(nuj(b_sp[2],r_w[geo_ora,3])) ) ;
   }
   // spatial risks for I predicted from Theta2 in RA
   val_theta  =  s_c * c[geo_ra] + 
-    log(nuj(w_sp[1],s_u[1]*u[,1])) - 
-    log(nuj(w_sp[2],s_u[2]*u[,2])); //dj
+    log(nuj(b_sp[1],s_u[1]*u[,1])) - 
+    log(nuj(b_sp[2],s_u[2]*u[,2])); //dj
   val_theta  =  exp( kappa * val_theta  + // shrunken d_j
 		     sqrt(kappa*(1-kappa)) * s_d * d_star[geo_ra] + // + Error for accurate variance
 		     r_w[geo_ra,1]) ; // + covariates

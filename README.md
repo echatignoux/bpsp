@@ -13,10 +13,9 @@ This repository contains the source code and documentation required to evaluate 
 
 The entire analysis, from data simulation to model estimation, is documented in the vignettes/ folder.
 
-```         
-To reproduce the simulation study: See vignettes/simulate-data.md.
-To reproduce the model fitting and evaluation: See vignettes/eval_bpsp.md.
-```
+- To reproduce the simulation study: See vignette [simulate-data](vignettes/simulate-data.md).
+- To reproduce the model fitting and evaluation: See vignette [eval_bpsp](vignettes/eval_bpsp.md).
+
 
 Note: The corresponding R Markdown files (.Rmd) are available in the same folder to run the code interactively.
 

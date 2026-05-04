@@ -3,6 +3,17 @@ BP-SP Model Evaluation
 This repository contains the source code and documentation required to
 evaluate and fit the BP-SP model.
 
+Reproducibility
+
+The entire analysis, from data simulation to model estimation, is documented in the vignettes/ folder.
+
+- To reproduce the simulation study: See vignettes/simulate-data.html.
+- To reproduce the model fitting and evaluation: See vignettes/eval_bpsp.html.
+
+
+Note: The corresponding R Markdown files (.Rmd) are available in the same folder to run the code interactively.
+
+
 Repository Structure
 
 1. vignettes/
